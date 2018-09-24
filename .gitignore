@@ -1,0 +1,11 @@
+bin
+*.zip
+selenium*
+beautifulsoup4*
+bs4*
+certifi*
+chardet*
+idna*
+requests*
+urllib3*
+__pycache__
