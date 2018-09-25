@@ -1,15 +1,17 @@
 # lambda-headless-chrome
 * headless-chromeを使用したlambda関数(python)のデプロイパッケージ
 
-## 何ができるのか
-* [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した試合結果サマリーをcsvとして出力する
-* csvファイルをs3のバケット(バケット名：'npb-match-results')にアップロード
-
 ## 作業フォルダの作成
 ```
 $ git clone https://github.com/takguchi/lambda-headless-chrome
 $ cd lambda_headless_chrome
 ```
+
+## lambda_function.py 作成
+* 今回は以下を実行するlambda_function.py を作成
+  * [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した試合結果サマリーをcsvとして出力する  
+  * csvファイルをs3のバケット(バケット名：'npb-match-results')にアップロード
+
 ## serverless-chromiumのダウンロード
 ```
 $ mkdir -p bin/
