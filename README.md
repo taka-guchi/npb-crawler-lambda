@@ -32,7 +32,7 @@ $ rm chromedriver.zip
 $ docker build -t lambda_headless_chrome .
 ```
 
-## Doerイメージをコンテナとして実行
+## Dockerイメージをコンテナとして実行
 ```
 $ docker run -v "${PWD}":/var/task lambda_headless_chrome
 ```
