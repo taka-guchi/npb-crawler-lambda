@@ -49,6 +49,7 @@ def lambda_handler(event,context):
                        'wt',newline='',encoding='utf-8')
         writer = csv.writer(csv_file)
 
+        # csvファイルへの書き出し
         try:
             for row in rows:
                 csv_row = []
@@ -60,7 +61,7 @@ def lambda_handler(event,context):
 
         sleep(1)
 
-        # S3にアップロード
+        # S3へアップロード
         bucket = s3.Bucket('npb-match-results')
         bucket.upload_file(file_name.format(year=this_year,team_capital=value),
                            '{year}/{year}_{team_capital}_match_results.csv'.format(year=this_year,team_capital=value))
