@@ -4,7 +4,7 @@
 ## 作業フォルダの作成
 ```
 $ git clone https://github.com/takguchi/lambda-headless-chrome
-$ cd lambda_headless_chrome
+$ cd lambda-headless-chrome
 ```
 
 ## lambda_function.py 作成
