@@ -7,12 +7,10 @@ import csv
 import boto3
 
 def lambda_handler(event,context):
-    # S3オブジェクトを生成する
     s3 = boto3.resource('s3')
 
-    options = webdriver.ChromeOptions()
-
     # healessで動かすために必要なオプション
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--single-process')
@@ -23,26 +21,26 @@ def lambda_handler(event,context):
     driver = webdriver.Chrome(
         './bin/chromedriver',chrome_options=options)
 
-    # サイト内のチームindexと対応するチーム名（頭文字）の辞書を作成する
+    # サイト内のチームindexと対応するチーム名（頭文字）の辞書を作成
     dict_teams = {1:'G',2:'S',3:'DB',4:'D',5:'T',6:'C',
                   7:'L',8:'F',9:'M',11:'Bs',12:'H',376:'E'}
 
     for key, value in dict_teams.items():
-        # チームごとにurlを作成する
+        # チームごとにurlを作成
         url = ('http://baseballdata.jp/{index}/GResult.html'.format(index=key))
 
-        # ブラウザでアクセスする
+        # ブラウザでアクセス
         driver.get(url)
-        # 「全て見る」リンクを押下して全データを表示させる
+        # 「全て見る」リンクを押下して全データを表示
         driver.find_element_by_class_name('allshow').click()
         sleep(1)
 
-        # HTMLの文字コードをUTF-8に変換して取得する
+        # HTMLの文字コードをUTF-8に変換して取得
         html = driver.page_source.encode('utf-8')
         soup = BeautifulSoup(html,'html.parser')
         rows = soup.findAll('tr')
 
-        # 現在年を取得する
+        # 現在年を取得
         this_year = datetime.date.today().year
 
         # CSVファイルの設定
@@ -62,10 +60,12 @@ def lambda_handler(event,context):
 
         sleep(1)
 
-        # S3にアップロードする
+        # S3にアップロード
         bucket = s3.Bucket('npb-match-results')
         bucket.upload_file(file_name.format(year=this_year,team_capital=value),
                            '{year}/{year}_{team_capital}_match_results.csv'.format(year=this_year,team_capital=value))
+
+        # ログ出力
         print('finish upload team={team_capital}'.format(team_capital=value))
 
     driver.close()
