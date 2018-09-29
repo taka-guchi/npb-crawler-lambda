@@ -9,7 +9,7 @@ $ cd lambda-headless-chrome
 
 ## lambda_function.py 作成
 * 今回は以下を実行するlambda_function.py を作成
-  * [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した試合結果サマリーをcsvとして出力する  
+  * [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した試合結果サマリーをcsvファイルに出力する  
   * csvファイルをs3のバケット(バケット名：'npb-match-results')にアップロード
 
 ## serverless-chromiumのダウンロード
