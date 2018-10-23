@@ -9,17 +9,15 @@ import boto3
 def lambda_handler(event,context):
     s3 = boto3.resource('s3')
 
-    # healessで動かすために必要なオプション
+    # headlessで動かすために必要なオプション
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--single-process')
-
-    # ダウンロードするバイナリを指定
+    # バイナリを指定
     options.binary_location = './bin/headless-chromium'
 
-    driver = webdriver.Chrome(
-        './bin/chromedriver',chrome_options=options)
+    driver = webdriver.Chrome('./bin/chromedriver',chrome_options=options)
 
     # サイト内のチームindexと対応するチーム名（頭文字）の辞書を作成
     dict_teams = {1:'G',2:'S',3:'DB',4:'D',5:'T',6:'C',
