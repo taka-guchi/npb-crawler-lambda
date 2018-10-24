@@ -34,6 +34,7 @@ def lambda_handler(event,context):
         # チームごとにurlを作成してスクレイプ
         url = (URL_TEMPLATE.format(index=key))
         screpe(url)
+        sleep(1)
 
     driver.close()
 
@@ -73,5 +74,3 @@ def lambda_handler(event,context):
 
     finally:
        csv_file.close()
-
-    sleep(1)
