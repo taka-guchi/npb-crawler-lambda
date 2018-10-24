@@ -23,17 +23,16 @@ def lambda_handler(event,context):
     # バイナリを指定
     options.binary_location = './bin/headless-chromium'
 
-     # ブラウザの起動
-     driver = webdriver.Chrome('./bin/chromedriver',chrome_options=options)
+    # ブラウザの起動
+    driver = webdriver.Chrome('./bin/chromedriver',chrome_options=options)
 
     # サイト内のチームindexと対応するチーム名（頭文字）の辞書を作成
     dict_teams = {1:'G',2:'S',3:'DB',4:'D',5:'T',6:'C',
                   7:'L',8:'F',9:'M',11:'Bs',12:'H',376:'E'}
 
     for key, value in dict_teams.items():
-        # チームごとにurlを作成
+        # チームごとにurlを作成してスクレイプ
         url = (URL_TEMPLATE.format(index=key))
-
         screpe(url)
 
     driver.close()
