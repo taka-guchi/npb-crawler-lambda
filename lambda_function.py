@@ -23,6 +23,9 @@ def lambda_handler(event,context):
     # バイナリを指定
     options.binary_location = './bin/headless-chromium'
 
+     # ブラウザの起動
+     driver = webdriver.Chrome('./bin/chromedriver',chrome_options=options)
+
     # サイト内のチームindexと対応するチーム名（頭文字）の辞書を作成
     dict_teams = {1:'G',2:'S',3:'DB',4:'D',5:'T',6:'C',
                   7:'L',8:'F',9:'M',11:'Bs',12:'H',376:'E'}
@@ -31,45 +34,45 @@ def lambda_handler(event,context):
         # チームごとにurlを作成
         url = (URL_TEMPLATE.format(index=key))
 
-        # CSVファイルの設定
-        csv_file = open(FILENAME_TEMPLATE.format(year=this_year,team_capital=value),
-                       'wt',newline='',encoding='utf-8')
-        writer = csv.writer(csv_file)
-
-        try:
-            # ブラウザの起動
-            driver = webdriver.Chrome('./bin/chromedriver',chrome_options=options)
-
-            # ブラウザでアクセス
-            driver.get(url)
-            # 「全て見る」リンクを押下して全データを表示
-            driver.find_element_by_class_name('allshow').click()
-            sleep(1)
-
-            # HTMLの文字コードをUTF-8に変換して取得
-            html = driver.page_source.encode('utf-8')
-            soup = BeautifulSoup(html,'html.parser')
-
-            # csvファイルへの書き出し
-            for row in soup.findAll('tr'):
-                csv_row = []
-                for cell in row.findAll("td"):
-                    csv_row.append(cell.get_text().strip())
-                writer.writerow(csv_row)
-
-            # S3へアップロード
-            bucket = s3.Bucket(BUCKET_NAME)
-            bucket.upload_file(FILENAME_TEMPLATE.format(directory='tmp',year=this_year,team_capital=value),
-                               FILENAME_TEMPLATE.format(directory=this_year,year=this_year,team_capital=value))
-
-            print('finish upload team={team_capital}'.format(team_capital=value))
-
-        except Exception as e:
-            print('error_message:{message}'.format(message=e))
-
-        finally:
-            csv_file.close()
-
-        sleep(1)
+        screpe(url)
 
     driver.close()
+
+ def scrape(rul):
+     # CSVファイルの設定
+    csv_file = open(FILENAME_TEMPLATE.format(year=this_year,team_capital=value),
+                   'wt',newline='',encoding='utf-8')
+    writer = csv.writer(csv_file)
+
+    try:
+        # ブラウザでアクセス
+        driver.get(url)
+        # 「全て見る」リンクを押下して全データを表示
+        driver.find_element_by_class_name('allshow').click()
+        sleep(1)
+
+        # HTMLの文字コードをUTF-8に変換して取得
+        html = driver.page_source.encode('utf-8')
+        soup = BeautifulSoup(html,'html.parser')
+
+        # csvファイルへの書き出し
+        for row in soup.findAll('tr'):
+            csv_row = []
+            for cell in row.findAll("td"):
+                csv_row.append(cell.get_text().strip())
+            writer.writerow(csv_row)
+
+        # S3へアップロード
+        bucket = s3.Bucket(BUCKET_NAME)
+        bucket.upload_file(FILENAME_TEMPLATE.format(directory='tmp',year=this_year,team_capital=value),
+                           FILENAME_TEMPLATE.format(directory=this_year,year=this_year,team_capital=value))
+
+        print('finish upload team={team_capital}'.format(team_capital=value))
+
+    except Exception as e:
+       print('error_message:{message}'.format(message=e))
+
+    finally:
+       csv_file.close()
+
+    sleep(1)
