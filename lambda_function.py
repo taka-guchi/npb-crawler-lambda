@@ -8,10 +8,12 @@ import boto3
 
 BUCKET_NAME = 'npb-match-results'
 URL_TEMPLATE = 'http://baseballdata.jp/{index}/GResult.html'
-FILENAME_TEMPLATE = '/{directory}/{year}_{team_capital}_match_results.csv'
+FILENAME_TEMPLATE = '{directory}/{year}_{team_capital}_match_results.csv'
 THIS_YEAR = datetime.date.today().year
 
 def lambda_handler(event,context):
+    s3 = boto3.resource('s3')
+
     # headlessで動かすために必要なオプション
     options = webdriver.ChromeOptions()
     options.add_argument('--headless')
@@ -30,15 +32,15 @@ def lambda_handler(event,context):
     for key, value in dict_teams.items():
         # チームごとにurlを作成してスクレイプ
         url = (URL_TEMPLATE.format(index=key))
-        screpe(driver,url)
+        scrape(driver,url,value,s3)
         sleep(1)
 
     driver.close()
 
-def scrape(driver,url):
-     # CSVファイルの設定
-    csv_file = open(FILENAME_TEMPLATE.format(year=THIS_YEAR,team_capital=value),
-                   'wt',newline='',encoding='utf-8')
+def scrape(driver,url,value,s3):
+    # CSVファイルの準備
+    csv_file = open(FILENAME_TEMPLATE.format(directory='/tmp',year=THIS_YEAR,team_capital=value),
+                    'wt',newline='',encoding='utf-8')
     writer = csv.writer(csv_file)
 
     try:
@@ -60,9 +62,8 @@ def scrape(driver,url):
             writer.writerow(csv_row)
 
         # S3へアップロード
-        s3 = boto3.resource('s3')
         bucket = s3.Bucket(BUCKET_NAME)
-        bucket.upload_file(FILENAME_TEMPLATE.format(directory='tmp',year=THIS_YEAR,team_capital=value),
+        bucket.upload_file(FILENAME_TEMPLATE.format(directory='/tmp',year=THIS_YEAR,team_capital=value),
                            FILENAME_TEMPLATE.format(directory=THIS_YEAR,year=THIS_YEAR,team_capital=value))
 
         print('finish upload team={team_capital}'.format(team_capital=value))
