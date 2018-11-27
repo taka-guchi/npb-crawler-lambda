@@ -55,7 +55,7 @@ def scrape(driver,url,value,s3):
         soup = BeautifulSoup(html,'html.parser')
 
         # csvファイルへの書き出し
-        for row in soup.findAll('tr'):
+        for row in soup.findAll("tr", class_=""):
             csv_row = []
             for cell in row.findAll("td"):
                 csv_row.append(cell.get_text().strip())
