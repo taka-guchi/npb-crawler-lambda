@@ -1,5 +1,5 @@
 # lambda-headless-chrome
-* headless-chromiumを使用したlambda関数(python)のデプロイパッケージ
+* headless-chromiumを使用したAWSLambda関数(python)のデプロイパッケージ
 
 ## 作業フォルダの作成
 ```
