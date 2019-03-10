@@ -30,10 +30,10 @@ $ rm chromedriver.zip
 
 ## Dockerイメージのビルド
 ```
-$ docker build -t lambda_headless_chrome .
+$ docker build -t npb-crawler-lambda .
 ```
 
 ## Dockerイメージをコンテナとして実行
 ```
-$ docker run -v "${PWD}":/var/task lambda_headless_chrome
+$ docker run -v "${PWD}":/var/task npb-crawler-lambda
 ```
