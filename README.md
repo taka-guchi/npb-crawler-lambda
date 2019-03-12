@@ -1,6 +1,6 @@
 # npb-crawler-lambda
 * headless-chromiumを使用したAWSLambda関数(python)のデプロイパッケージ
-  * [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した試合結果サマリーをcsvファイルに出力する  
+  * [データで楽しむプロ野球](http://baseballdata.jp/"データで楽しむプロ野球")から取得した**当年の**試合結果サマリーをcsvファイルに出力する  
   * csvファイルをs3のバケットにアップロード
 
 ## 作業フォルダの作成
