@@ -1,12 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.common.by import By
 from time import sleep
 import datetime
 import csv
 import boto3
 
-BUCKET_NAME = 'npb-match-result'
+BUCKET_NAME = 'npb-match-results'
 URL_TEMPLATE = 'http://baseballdata.jp/{index}/GResult.html'
 FILENAME_TEMPLATE = '{directory}/{year}_{team_capital}_match_results.csv'
 THIS_YEAR = datetime.date.today().year
@@ -46,20 +47,30 @@ def scrape(driver,url,value,s3):
     try:
         # ブラウザでアクセス
         driver.get(url)
-        # 「全て見る」リンクを押下して全データを表示
-        driver.find_element_by_class_name('allshow').click()
-        sleep(1)
+        # スクレイピング対象trのクラス名
+        # => 「全て見る」リンク押下後はクラス名が空になるため変数で保持して可変にする
+        tr_class = 'deftr'
+        # 「全て見る」リンクが画面に存在すれば押下して全データを表示する
+        link_all_show = driver.find_elements(By.XPATH, "//div[@class='allshow']")
+        if len(link_all_show) > 0:
+            driver.find_element_by_class_name('allshow').click()
+            tr_class = ''
+            sleep(1)
 
         # HTMLの文字コードをUTF-8に変換して取得
         html = driver.page_source.encode('utf-8')
         soup = BeautifulSoup(html,'html.parser')
 
         # csvファイルへの書き出し
-        for row in soup.findAll('tr', class_=''):
+        for row in soup.findAll('tr', class_=tr_class):
             csv_row = []
             for cell in row.findAll('td', bgcolor=''):
                 csv_row.append(cell.get_text().strip())
-            writer.writerow(csv_row)
+            # 空行は無視する
+            if csv_row:
+                writer.writerow(csv_row)
+        # 明示的にcsvファイルを閉じなければ、書き込み後のファイルがアップロードできない
+        csv_file.close()
 
         # S3へアップロード
         bucket = s3.Bucket(BUCKET_NAME)
