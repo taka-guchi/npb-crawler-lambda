@@ -7,7 +7,7 @@ import datetime
 import csv
 import boto3
 
-BUCKET_NAME = 'npb-match-results'
+BUCKET_NAME = 'npb-match-result'
 URL_TEMPLATE = 'http://baseballdata.jp/{index}/GResult.html'
 FILENAME_TEMPLATE = '{directory}/{year}_{team_capital}_match_results.csv'
 THIS_YEAR = datetime.date.today().year
